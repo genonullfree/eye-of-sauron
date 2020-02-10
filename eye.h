@@ -6,6 +6,9 @@
 #include <linux/init.h>
 #include <linux/keyboard.h>
 #include <linux/notifier.h>
+#include <linux/seq_file.h>
+#include <linux/proc_fs.h>
+#include <linux/uaccess.h>
 
 /* Struct for remembering sysfs grp info */
 struct module_sect_attr {

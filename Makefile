@@ -1,7 +1,7 @@
 modname := eye
 obj-m := $(modname).o
 
-#eye-objs := eye.o
+eye-objs := eye.o ops.o
 
 KVER = $(shell uname -r)
 KDIR := /lib/modules/$(KVER)/build
