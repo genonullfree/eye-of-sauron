@@ -1,8 +1,4 @@
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/init.h>
-#include <linux/keyboard.h>
-#include <linux/notifier.h>
+#include "eye.h"
 
 /* Kernel Module License */
 MODULE_AUTHOR("geno");
@@ -18,6 +14,7 @@ static struct attribute_group *_kgrp  = NULL;
 static int start_eye(void);
 static void end_eye(void);
 static int sauron_notify(struct notifier_block *nb, unsigned long code, void *data);
+void ring_on(void);
 
 module_init(start_eye);
 module_exit(end_eye);
@@ -32,6 +29,8 @@ static int start_eye(void)
 {
     register_keyboard_notifier(&_sauron);
     printk("The Eye of Sauron is upon you.\n");
+
+//    ring_on();
 
     return 0;
 }
