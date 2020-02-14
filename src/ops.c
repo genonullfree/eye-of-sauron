@@ -1,5 +1,5 @@
-#include "eye.h"
-#include "ops.h"
+#include "../include/eye.h"
+#include "../include/ops.h"
 
 /* Global Variables */
 static char _pbuff[KERN_BUF] = "";

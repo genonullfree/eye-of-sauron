@@ -1,8 +1,7 @@
-#include "eye.h"
-#include "ops.h"
+#include "../include/eye.h"
+#include "../include/ops.h"
 
 /* Kernel Module License */
-MODULE_AUTHOR("geno");
 MODULE_LICENSE("GPL");
 
 /* Global Variables */
