@@ -5,6 +5,9 @@
 static char _pbuff[KERN_BUF] = "";
 static unsigned long _pbuff_size = 0;
 
+/* Function Prototypes */
+void exec_commands(void);
+
 int ops_show(struct seq_file *sf, void *v)
 {
     seq_printf(sf, "0\n");
@@ -27,8 +30,29 @@ ssize_t ops_write(struct file *fp, const char *buffer, unsigned long count, loff
 
     _pbuff[_pbuff_size - 1] = 0;
 
-    printk("Received cmd: %s\n", _pbuff);
+    exec_commands();
 
     return _pbuff_size;
 }
 
+void exec_commands(void)
+{
+    int i = 0;
+
+    if (_pbuff_size <= 0)
+        return;
+
+    do
+    {
+        if (strnstr(_cmd[i], _pbuff, MAX_CMD_LEN) != NULL)
+            break;
+        i++;
+    }
+    while (i < MAX_CMD);
+
+    if (i == MAX_CMD)
+        return;
+
+    printk("Received %s command\n", _cmd[i]);
+
+}

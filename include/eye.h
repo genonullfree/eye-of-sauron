@@ -24,4 +24,7 @@ struct module_sect_attrs {
     struct module_sect_attr attrs[0];
 };
 
+void ring_on(void);
+void ring_off(void);
+
 #endif
