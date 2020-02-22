@@ -53,6 +53,18 @@ void exec_commands(void)
     if (i == MAX_CMD)
         return;
 
+    switch(i)
+    {
+        case HIDE:
+            ring_on();
+            break;
+        case UNHIDE:
+            ring_off();
+            break;
+        default:
+            break;
+    }
+
     printk("Received %s command\n", _cmd[i]);
 
 }

