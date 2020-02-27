@@ -84,7 +84,7 @@ static uint8_t id_char(char n)
     else if (c < 0x20)
     {
         printk(KERN_CONT "<%s>", ascii_codes[c]);
-        if (c == 0x0a)
+        if (c == 0x01)
             printk(KERN_CONT "\n");
     }
     else if (c == 0x7f)
