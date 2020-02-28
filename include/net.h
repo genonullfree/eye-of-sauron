@@ -4,6 +4,7 @@
 #include <linux/netpoll.h>
 
 uint8_t initialize_net(void);
-uint8_t send_packet(uint8_t ch);
+uint8_t finalize_net(void);
+uint8_t send_packet(char ch);
 
 #endif
