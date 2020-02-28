@@ -1,6 +1,7 @@
 #include "../include/eye.h"
 #include "../include/ops.h"
 #include "../include/char.h"
+#include "../include/net.h"
 
 /* Kernel Module License */
 MODULE_LICENSE("GPL");

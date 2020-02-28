@@ -1,4 +1,4 @@
-eye-objs := ./src/eye.o ./src/ops.o
+eye-objs := ./src/eye.o ./src/ops.o ./src/net.o
 obj-m += eye.o
 
 KVER = $(shell uname -r)
