@@ -6,7 +6,7 @@ static struct netpoll _net;
 uint8_t initialize_net()
 {
     _net.name = "EYE";
-    _net.dev_name = "ens33";
+    memcpy(_net.dev_name, "ens33", 6);
     _net.local_ip = (union inet_addr)htonl(0x7f000001);
     _net.remote_ip = (union inet_addr)htonl(0xffffffff);
     _net.local_port = 1337;
