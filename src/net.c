@@ -13,6 +13,12 @@ uint8_t scan_netdev()
     dev = first_net_device(&init_net);
     while (dev)
     {
+        if (!strncmp(dev->name, "lo", 2))
+        {
+            dev = next_net_device(dev);
+            continue;
+        }
+
         printk(KERN_INFO "found %s\n", dev->name);
         nd = kmalloc(sizeof(struct netdevs), GFP_KERNEL);
         if (nd == NULL)
