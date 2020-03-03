@@ -8,6 +8,7 @@
 
 struct netdevs {
     char name[16];
+    struct netpoll net;
     struct list_head node;
 };
 

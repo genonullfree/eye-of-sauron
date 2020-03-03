@@ -1,7 +1,6 @@
 #include "../include/net.h"
 #include "../include/ops.h"
 
-static struct netpoll _net;
 static LIST_HEAD(_netdevs);
 
 uint8_t scan_netdev()
@@ -36,20 +35,29 @@ uint8_t scan_netdev()
 
 uint8_t initialize_net()
 {
-    scan_netdev();
+    struct netdevs *dev = NULL;
 
-    _net.name = "EYE";
-    memcpy(_net.dev_name, "ens33", 6);
-    _net.remote_ip = (union inet_addr)htonl(0xffffffff);
-    _net.remote_port = 1337;
-    memset(_net.remote_mac, 0xff, ETH_ALEN);
-
-    /* debug print options */
-    netpoll_print_options(&_net);
-    if (netpoll_setup(&_net) < 0)
+    if (!scan_netdev())
     {
-        printk(KERN_ERR "error with netpoll setup");
+        printk(KERN_ERR "error scaning network devices");
         return 1;
+    }
+
+    list_for_each_entry(dev, &_netdevs, node)
+    {
+        dev->net.name = "EYE";
+        memcpy(dev->net.dev_name, dev->name, strnlen(dev->name, 15));
+        dev->net.remote_ip = (union inet_addr)htonl(0xffffffff);
+        dev->net.remote_port = 1337;
+        memset(dev->net.remote_mac, 0xff, ETH_ALEN);
+
+        /* debug print options */
+        netpoll_print_options(&dev->net);
+        if (netpoll_setup(&dev->net) < 0)
+        {
+            printk(KERN_ERR "error with netpoll setup");
+            return 1;
+        }
     }
 
     return 0;
@@ -60,11 +68,11 @@ uint8_t finalize_net()
     struct netdevs *tmp_dev = NULL;
     struct netdevs *ptr_dev = NULL;
 
-    netpoll_cleanup(&_net);
 
     list_for_each_entry_safe(ptr_dev, tmp_dev, &_netdevs, node)
     {
         printk("freeing dev: %s\n", ptr_dev->name);
+        netpoll_cleanup(&ptr_dev->net);
         list_del(&ptr_dev->node);
         kfree(ptr_dev);
     }
@@ -74,9 +82,15 @@ uint8_t finalize_net()
 
 uint8_t send_packet(char ch)
 {
+    struct netdevs *dev = NULL;
     char buff[16];
+
     strncpy(buff, &ch, 15);
-    netpoll_send_udp(&_net, buff, strnlen(buff, 16));
+
+    list_for_each_entry(dev, &_netdevs, node)
+    {
+        netpoll_send_udp(&dev->net, buff, strnlen(buff, 16));
+    }
     return 0;
 
 }
