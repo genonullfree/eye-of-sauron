@@ -47,7 +47,12 @@ static int start_eye(void)
     printk("The Eye of Sauron is upon you.\n");
 
     _ops = proc_create("eye", 0777, NULL, &fops);
-    initialize_net();
+    if (!initialize_net())
+    {
+        printk(KERN_ERR "error initializing network\n");
+        return -1;
+    }
+
 //    ring_on();
 
     return 0;

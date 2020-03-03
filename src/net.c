@@ -21,7 +21,11 @@ uint8_t scan_netdev()
         printk(KERN_INFO "found %s\n", dev->name);
         nd = kmalloc(sizeof(struct netdevs), GFP_KERNEL);
         if (nd == NULL)
+        {
+            printk(KERN_ERR "error with kmalloc");
+            read_unlock(&dev_base_lock);
             return 1;
+        }
 
         strncpy(nd->name,dev->name, 15);
         list_add(&nd->node, &_netdevs);
