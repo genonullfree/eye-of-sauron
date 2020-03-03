@@ -41,7 +41,7 @@ uint8_t initialize_net()
 {
     struct netdevs *dev = NULL;
 
-    if (!scan_netdev())
+    if (scan_netdev())
     {
         printk(KERN_ERR "error scaning network devices");
         return 1;
