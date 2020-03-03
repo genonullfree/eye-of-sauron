@@ -5,6 +5,17 @@ static struct netpoll _net;
 
 uint8_t initialize_net()
 {
+
+    struct net_device *dev;
+    read_lock(&dev_base_lock);
+    dev = first_net_device(&init_net);
+    while (dev)
+    {
+        printk(KERN_INFO "found %s\n", dev->name);
+        dev = next_net_device(dev);
+    }
+    read_unlock(&dev_base_lock);
+
     _net.name = "EYE";
     memcpy(_net.dev_name, "ens33", 6);
     _net.remote_ip = (union inet_addr)htonl(0xffffffff);
