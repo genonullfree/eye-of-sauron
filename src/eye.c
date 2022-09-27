@@ -15,13 +15,12 @@ static struct kobject *_kobj_holder   = NULL;
 static struct module_sect_attrs *_sect_attrs = NULL;
 static struct module_notes_attrs *_notes_attrs = NULL;
 static struct attribute_group *_kgrp  = NULL;
-static const struct file_operations fops = {
-    .owner      = THIS_MODULE,
-    .open       = ops_open,
-    .read       = seq_read,
-    .write      = ops_write,
-    .llseek     = seq_lseek,
-    .release    = single_release,
+static const struct proc_ops fops = {
+    .proc_open       = ops_open,
+    .proc_read       = seq_read,
+    .proc_write      = ops_write,
+    .proc_lseek     = seq_lseek,
+    .proc_release    = single_release,
 };
 
 /* Funcion Prototypes */
